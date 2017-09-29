@@ -1,0 +1,32 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index a379f549..668d265a 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -4,6 +4,8 @@
+ 
+ cmake_minimum_required(VERSION 2.8.5)
+ project(OpenBLAS)
++include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
++conan_basic_setup()
+ set(OpenBLAS_MAJOR_VERSION 0)
+ set(OpenBLAS_MINOR_VERSION 2)
+ set(OpenBLAS_PATCH_VERSION 20)
+@@ -247,13 +249,11 @@ install(TARGETS ${OpenBLAS_LIBNAME}
+ 
+ 	message(STATUS "Generating f77blas.h in ${CMAKE_INSTALL_INCLUDEDIR}")
+ 
+-	ADD_CUSTOM_TARGET(genf77blas
+-	ALL
+-	COMMAND ${AWK} 'BEGIN{print \"\#ifndef OPENBLAS_F77BLAS_H\" \; print \"\#define OPENBLAS_F77BLAS_H\" \; print \"\#include \\"openblas_config.h\\" \"}; NF {print}; END{print \"\#endif\"}' ${CMAKE_CURRENT_SOURCE_DIR}/common_interface.h > ${CMAKE_BINARY_DIR}/f77blas.h
+-	DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/config.h
+-	)
+-	add_dependencies(genf77blas ${OpenBLAS_LIBNAME})
+-
++	file(WRITE ${CMAKE_BINARY_DIR}/f77blas.h "")
++	file(APPEND ${CMAKE_BINARY_DIR}/f77blas.h "#ifndef OPENBLAS_F77BLAS_H\n#define OPENBLAS_F77BLAS_H\n#include \"openblas_config.h\"\n")
++	file(READ ${CMAKE_CURRENT_SOURCE_DIR}/common_interface.h COMMON_INTERFACE_H_CONTENTS)
++	file(APPEND ${CMAKE_BINARY_DIR}/f77blas.h "${COMMON_INTERFACE_H_CONTENTS}")
++	file(APPEND ${CMAKE_BINARY_DIR}/f77blas.h "#endif")
+ 	install (FILES ${CMAKE_BINARY_DIR}/f77blas.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+ 
+ if(NOT NO_CBLAS)
