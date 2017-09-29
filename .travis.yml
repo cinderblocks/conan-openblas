@@ -1,9 +1,9 @@
 
 env:
    global:
-     - CONAN_REFERENCE: "OpenBLAS/0.3.0"
+     - CONAN_REFERENCE: "OpenBLAS/0.2.20"
      - CONAN_USERNAME: "slidewavellc"
-     - CONAN_CHANNEL: "development"
+     - CONAN_CHANNEL: "stable"
      
 linux: &linux
    os: linux

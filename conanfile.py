@@ -8,25 +8,19 @@ class OpenBLASConan(ConanFile):
     url = "https://github.com/cinderblocks/conan-openblas"
     description = "OpenBLAS is an optimized BLAS library based on GotoBLAS2 1.13 BSD version."
     settings = "os", "compiler", "build_type", "arch"
-    options = {"shared": [True, False]}
-    default_options = "shared=False"
     generators = "cmake"
+    exports_sources = "patch.diff"
 
     def source(self):
         self.run("git clone https://github.com/xianyi/OpenBLAS.git")
         self.run("cd OpenBLAS && git checkout tags/v0.2.20")
-        # This small hack might be useful to guarantee proper /MT /MD linkage in MSVC
-        # if the packaged project doesn't have variables to set it properly
-        tools.replace_in_file("OpenBLAS/CMakeLists.txt", "project(OpenBLAS)", '''project(OpenBLAS)
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()''')
+        # This patch contains a small hack that might be useful to guarantee
+        # proper /MT /MD linkage in MSVC if the packaged project doesn't have
+        # variables to set it properly
+        # It also removed a dependence on awk because Window has poor quoting support
+        self.run("cp patch.diff OpenBLAS && cd OpenBLAS && git apply patch.diff")
 
-    def build_requirements(self):
-        # useful for example for conditional build_requires
-        if self.settings.os == "Windows":
-            self.build_requires("nasm/2.13.01@conan/stable")
-
-    def build(self):
+    def build(self):   
         cmake = CMake(self)
         self.run('cmake OpenBLAS %s' % cmake.command_line)
         self.run("cmake --build . %s" % cmake.build_config)
@@ -40,4 +34,4 @@ conan_basic_setup()''')
         self.copy("*.a", dst="lib", keep_path=False)
 
     def package_info(self):
-        self.cpp_info.libs = ["OpenBLAS"]
+        self.cpp_info.libs = ["libopenblas"]
