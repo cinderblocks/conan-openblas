@@ -22,6 +22,11 @@ class OpenBLASConan(ConanFile):
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()''')
 
+    def build_requirements(self):
+        # useful for example for conditional build_requires
+        if self.settings.os == "Windows":
+            self.build_requires("nasm/2.13.01@conan/stable")
+
     def build(self):
         cmake = CMake(self)
         self.run('cmake OpenBLAS %s' % cmake.command_line)
