@@ -18,7 +18,7 @@ class OpenBLASConan(ConanFile):
         self.run("cd OpenBLAS && git checkout 00c42dc8155cabc0b28443bd647d2c268fd98bab")
         # This small hack might be useful to guarantee proper /MT /MD linkage in MSVC
         # if the packaged project doesn't have variables to set it properly
-        tools.replace_in_file("OpenBLAS/CMakeLists.txt", "PROJECT(OpenBLAS)", '''PROJECT(OpenBLAS)
+        tools.replace_in_file("OpenBLAS/CMakeLists.txt", "project(OpenBLAS)", '''project(OpenBLAS)
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()''')
 
