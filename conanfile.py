@@ -27,11 +27,11 @@ class OpenBLASConan(ConanFile):
 
     def package(self):
         self.copy("*.h", dst="include", src="OpenBLAS")
-        self.copy("*.lib", dst="lib", keep_path=False)
-        self.copy("*.dll", dst="bin", keep_path=False)
+        self.copy("*.lib", dst="lib", src="lib", keep_path=False)
+        self.copy("*.dll", dst="bin", src="lib", keep_path=False)
         self.copy("*.so", dst="lib", keep_path=False)
         self.copy("*.dylib", dst="lib", keep_path=False)
         self.copy("*.a", dst="lib", keep_path=False)
 
     def package_info(self):
-        self.cpp_info.libs = ["libopenblas"]
+        self.cpp_info.libs = ["libopenblas", "kernel", "interface", "driver_level2", "driver_level3", "driver_others"]
